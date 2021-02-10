@@ -27,6 +27,7 @@
 
 <script>
     import Banner from "../../../../components/Banner";
+    import dsbrige from 'dsbridge'
     export default {
         name: "Settings",
         methods:{
@@ -35,6 +36,8 @@
             },
             logout(){
                 localStorage.clear();
+                dsbrige.call('setToken','')
+                this.$router.replace('/login')
             }
         },
         components:{
