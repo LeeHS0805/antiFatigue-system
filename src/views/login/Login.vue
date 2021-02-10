@@ -43,7 +43,7 @@
             return {
                 show: false,
                 loginForm: {
-                    mobile: '18920259091',
+                    mobile: '',
                     password: '',
                 },
                 //字符检验
