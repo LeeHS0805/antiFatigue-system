@@ -11,7 +11,7 @@
             return {
                 msg: '11'
             }
-        }
+        },
     }
 </script>
 

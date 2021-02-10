@@ -10,23 +10,23 @@
                 <span class="form-text">LOG IN</span>
                 <el-form class="login_form" :model="loginForm" :rules="checkData" ref="loginFormRef">
                     <!--                    用户名-->
-                    <el-form-item class="efi" prop="username">
-                        <el-input prefix-icon="el-icon-user" v-model="loginForm.username"></el-input>
+                    <el-form-item class="efi" prop="mobile">
+                        <el-input prefix-icon="el-icon-user" v-model="loginForm.mobile"></el-input>
                     </el-form-item>
                     <!--                    密码-->
                     <el-form-item class="efi" prop="password">
                         <el-input prefix-icon="el-icon-lock" v-model="loginForm.password" type="password"
-                                  @keyup.enter.native="Login"></el-input>
+                                  @keyup.enter.native="login"></el-input>
                     </el-form-item>
                     <!--                    按钮-->
                     <el-form-item class="ebt">
-                        <el-button type="primary" @click="Login">登 录</el-button>
+                        <el-button type="primary" @click="login">登 录</el-button>
                     </el-form-item>
                 </el-form>
                 <div class="other">
                     <span>忘记密码</span>
                     <el-divider direction="vertical"></el-divider>
-                    <span @click="go('signIn')">注册账户</span>
+                    <span @click="go('signIn')">手机登录</span>
                 </div>
             </div>
         </transition>
@@ -34,38 +34,56 @@
 </template>
 
 <script>
+    import api from "../../api/api";
+    import tool from "../../tool/tool";
+
     export default {
         name: "login",
         data() {
             return {
                 show: false,
                 loginForm: {
-                    username: '',
+                    mobile: '18920259091',
                     password: '',
                 },
                 //字符检验
-                checkData: {
-                    username: [
-                        {required: true, message: '请输入用户名', trigger: 'blur'},
-                        {min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur'}
-                    ],
-                    password: [
-                        {required: true, message: '请输入密码', trigger: 'blur'},
-                        {min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur'}
-                    ]
-                },
+                checkData:'',
             }
         },
         methods: {
-            login(){
-                go(home)
+            checkFormVal() {
+                //校验登录参数
+                let isReady = false;
+                this.$refs.loginFormRef.validate(async isRight => {
+                    isReady = isRight;
+                })
+                return isReady;
             },
-            go(path){
-                this.$router.push('/'+path)
+            async login() {
+                if (this.checkFormVal()) {
+                    const {data} = await api.postPassword(this.loginForm)
+                    if (data.code == 0) {
+                        localStorage.setItem('token', data.token)
+                        var str = this.$dsBridge.call("setToken",data.token);
+                        this.go('profile')
+                    } else {
+                        Notify({
+                            message: data.msg,
+                            color: '#ffffff',
+                            background: '#ffbb55',
+                            duration: 1000
+                        })
+                    }
+                }
+
+            },
+            go(path) {
+                this.$router.push('/' + path)
             }
         },
         mounted() {
-            this.show=true
+            this.show = true
+            this.checkData=tool['checkData']
         }
     }
 </script>
@@ -76,6 +94,7 @@
         height: 100vh;
         overflow: hidden;
         text-align: center;
+
         .top_container {
             height: 40vh;
             width: 100vw;
@@ -85,7 +104,8 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             text-align: center;
-            span{
+
+            span {
                 display: inline-block;
                 margin-top: 25%;
                 font-size: 30px;
@@ -97,7 +117,7 @@
         }
 
         .form_container {
-            height:85vh;
+            height: 85vh;
             overflow: hidden;
             margin-top: 25vh;
             background-color: white;
@@ -105,24 +125,29 @@
             border-top-left-radius: 35px;
             border: 1px solid rgba(236, 236, 236, 0.82);
             box-shadow: 2px -2px 15px 0 rgba(80, 80, 80, 0.6);
-            .form-text{
+
+            .form-text {
                 display: inline-block;
                 font-size: 25px;
                 letter-spacing: 5px;
                 font-weight: 500;
                 margin-top: 14%;
             }
+
             .login_form {
                 margin-top: 10%;
                 padding: 0 40px;
+
                 .efi {
                     margin: 35px auto;
                 }
             }
-            .other{
+
+            .other {
                 display: inline-block;
                 margin-top: 30px;
-                span{
+
+                span {
                     font-size: 14px;
                     letter-spacing: 2px;
                     color: #5f5f5f;
@@ -149,16 +174,20 @@
         letter-spacing: 3px;
         border-radius: 21px;
     }
-    .login-enter{
+
+    .login-enter {
         transform: translateY(10vh);
     }
-    .text-enter{
+
+    .text-enter {
         transform: scale(0.1);
     }
-    .login-enter-active{
+
+    .login-enter-active {
         transition: .6s all ease-in-out;
     }
-    .text-enter-active{
+
+    .text-enter-active {
         transition: .8s all ease-in-out;
     }
 

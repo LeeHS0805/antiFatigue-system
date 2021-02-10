@@ -1,4 +1,4 @@
 module.exports = {
-  publicPath: '/fatigueDetection/',
+  publicPath: './',
   runtimeCompiler: true
 }
