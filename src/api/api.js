@@ -35,6 +35,11 @@ export default {
     async postEmergencePhone(info){
         const data = await axios.post(`/phone`, info)
         return data
+    },
+    //获取历史
+    async getHistory(start,end){
+        const data = await axios.get(`/fatigue/query?start=${start}&end=${end}`, )
+        return data
     }
 
 

@@ -1,9 +1,4 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
 import Login from "../views/login/Login";
-import Profile from "../views/main/profile/Profile";
-import SignIn from "../views/login/SignIn";
-import Settings from "../views/main/profile/Component/Settings";
 import Info from "../views/main/profile/Component/Info";
 import Contact from "../views/main/profile/Component/Contact";
 import dsbrige from "dsbridge";
@@ -22,17 +17,18 @@ const routes = [
   {
     path: '/profile',
     name:'profile',
-    component: Profile
-  },
+    component: resolve=>require(['/src/views/main/profile/Profile'],resolve)
+  }
+  ,
   {
     path: '/signIn',
     name:'signIn',
-    component: SignIn
+    component: resolve=>require(['/src/views/login/SignIn'],resolve)
   },
   {
     path: '/settings',
     name:'settings',
-    component: Settings,
+    component: resolve=>require(['/src/views/main/profile/Component/Settings.vue'],resolve)
   },
   {
     path: '/contact',

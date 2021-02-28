@@ -1,5 +1,5 @@
 docker stop fatigue
-git pull
+git reset --hard origin/master
 yarn
 yarn build
 docker rm -f fatigue
