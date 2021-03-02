@@ -32,12 +32,12 @@
 			<span class="middle-head">History</span>
 			<div class="middle-func">
 				<div class="func">
-					<div class="func-name">今日疲劳</div>
-					<div class="func-value">0</div>
+					<div class="func-name">最近时间</div>
+					<div class="func-value">{{ detail.date }}</div>
 				</div>
 				<div class="func">
-					<div class="func-name">最近时间</div>
-					<div class="func-value">2月28日</div>
+					<div class="func-name">疲劳次数</div>
+					<div class="func-value">{{ detail.time }}</div>
 				</div>
 				<div class="func">
 					<div class="func-name">是否响应</div>
@@ -79,7 +79,12 @@ export default {
 					data: [0, 0, 0, 0, 0, 0, 0]
 				}]
 			},
-			date: []
+			date: [],
+			detail: {
+				date: 'NAN',
+				time: '0'
+			},
+			myChart: ''
 		}
 	},
 	methods: {
@@ -87,10 +92,9 @@ export default {
 			this.$router.push('/' + path)
 		},
 		myEcharts() {
-			var myChart = this.$echarts.init(document.getElementById('main'));
-
 			// 使用刚指定的配置项和数据显示图表。
-			myChart.setOption(this.option);
+			this.myChart = this.$echarts.init(document.getElementById('main'))
+			this.myChart.setOption(this.option);
 		},
 		getDate() {
 			let dayNow = new Date()
@@ -99,27 +103,40 @@ export default {
 				let day = new Date();
 				day.setTime(dayNow.getTime() - item * 24 * 60 * 60 * 1000)
 				this.date.push(day)
-				this.option.xAxis.data[6 - item] = day.getMonth() + '/' + day.getDate()
+				this.option.xAxis.data[6 - item] = day.getMonth()+1 + '/' + day.getDate()
+
 			}
 		},
 		async getHistoryInfo() {
 			for (let item in this.date) {
 				let num;
 				if (item == 0) {
-					num = await api.getHistory(this.date[item].getTime(), new Date().getTime())
+					num = await api.getHistory((parseInt(this.date[item].getTime() / 1000)), parseInt(new Date().getTime() / 1000))
 				} else {
-					num = await api.getHistory(this.date[item].getTime(), this.date[item - 1].getTime())
+					num = await api.getHistory(parseInt(this.date[item].getTime() / 1000), parseInt(this.date[item - 1].getTime() / 1000))
 				}
+				this.getLastest()
 				this.option.series[0].data[6 - item] = num.data.count;
 			}
-		}
+		},
+		getLastest(){
+			let lastestData = 1;
+			for (let i =0;i<7;i++){
+				if (lastestData && this.option.series[0].data[i]>0) {
+					this.detail.time = this.option.series[0].data[i]
+					this.detail.date = this.option.xAxis.data[i]
+					lastestData=0
+				}
+			}
+		},
+	},
+	async created() {
+		this.getDate()
+		await this.getHistoryInfo()
+		this.myChart.setOption(this.option);
 	},
 	mounted() {
 		this.myEcharts();
-	},
-	created() {
-		this.getDate()
-		this.getHistoryInfo()
 	}
 }
 </script>

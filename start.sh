@@ -1,6 +1,5 @@
 docker stop fatigue
-git reset --hard origin/master
-yarn
+git fetch --all && git reset --hard origin/master && git pullyarn
 yarn build
 docker rm -f fatigue
 docker run -d --restart=on-failure:5\
