@@ -1,7 +1,7 @@
 export default {
     checkData: {
         mobile: [
-            {required: true, message: '请输入用户名', trigger: 'blur'},
+            {required: true, message: '请输入手机号码' , trigger: 'blur'},
             {min: 11, max: 11, message: '长度为11位数字', trigger: 'blur'}
         ],
         userName: [

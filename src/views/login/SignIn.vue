@@ -4,15 +4,15 @@
             <span>欢迎使用疲劳驾驶检测APP</span>
         </div>
         <div class="main_container">
-            <el-form class="login_form" :model="loginForm" :rules="checkData" ref="loginFormRef">
+            <el-form class="login_form" :model="loginForm" :rules="checkData1" ref="sigInFormRef">
                 <!--                    手机-->
-                <el-form-item class="efi" prop="phone">
+                <el-form-item class="efi" prop="mobile">
                     <el-input placeHolder="请输入手机号" prefix-icon="el-icon-mobile-phone"
-                              v-model="loginForm.phone"></el-input>
+                              v-model.number="loginForm.mobile"></el-input>
                 </el-form-item>
                 <el-form-item class="efi " prop="code">
                     <el-input placeHolder="请输入验证码" class='efi-code' prefix-icon="el-icon-chat-dot-round"
-                              v-model="loginForm.code" type="text"></el-input>
+                              v-model.number="loginForm.code" type="text"></el-input>
                     <el-button class='ebt-code' type="warning" @click="getCode">{{codeText}}</el-button>
                 </el-form-item>
                 <!--                    按钮-->
@@ -26,9 +26,10 @@
 
 </template>
 
+
 <script>
     import api from "../../api/api";
-    import {checkData} from "../../tool/tool";
+    import checkData from "../../tool/tool";
     export default {
         name: "SignIn",
         data() {
@@ -38,9 +39,10 @@
                     code: '',
                 },
                 //字符检验
-                checkData:checkData,
+	            checkData1:null,
                 codeText: '验证码',
-                time: 60
+                time: 60,
+	            uuid:''
             }
         },
         methods: {
@@ -50,15 +52,20 @@
             checkFormVal() {
                 //校验登录参数
                 let isReady = false;
-                this.$refs.loginFormRef.validate(async isRight => {
+	            console.log(this.checkData1)
+                this.$refs.sigInFormRef.validate(async (isRight,a) => {
                     isReady = isRight;
+	                console.log(a)
                 })
                 return isReady;
             },
             async getCode() {
                 //获取手机验证码
+	            if(!this.checkFormVal()){
+	            	return
+	            }
                 if (this.time != 60) {
-                    Notify({
+                    this.$notify({
                         message: '请 勿 频 繁 点 击',
                         color: '#ffffff',
                         background: '#ffbb55',
@@ -74,17 +81,22 @@
                         this.time = 60
                     }
                 }, 1000)
-                const {msg, code} = await api.getPhone(this.loginForm.phone);
+	            this.uuid = new Date().getTime()+this.loginForm.mobile
+                const {msg, code} = await api.getPhone(this.loginForm.mobile,this.uuid);
 
             },
             async login() {
                 if (this.checkFormVal()) {
-                    const code={code:this.loginForm.code}
-                    const result =  await api.postCode(code)
-                    console.log(result)
+                    this.loginForm.uuid=this.uuid
+	                console.log(this.loginForm)
+                    const result =  await api.postCode(this.loginForm)
                 }
             }
-        }
+        },
+	    created(){
+		    console.log(checkData)
+		    this.checkData1=checkData.checkData
+	    }
     }
 </script>
 

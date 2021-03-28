@@ -2,8 +2,8 @@ import axios from "axios";
 
 export default {
     //登录手机验证码请求
-    async getPhone(mobile) {
-        const data = await axios.get(`/vercode?mobile=${mobile}`)
+    async getPhone(mobile,uuid) {
+        const data = await axios.get(`/vercode?mobile=${mobile}&uuid=${uuid}`)
         return data
     },
     //验证码登录

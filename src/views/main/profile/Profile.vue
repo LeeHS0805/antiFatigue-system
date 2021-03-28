@@ -144,7 +144,7 @@ export default {
 <style scoped lang="less">
 .profile_container {
 	width: 100%;
-	height: 100%;
+	height: 100vh;
 	overflow: hidden;
 
 	.profile_top {
@@ -153,7 +153,8 @@ export default {
 		text-align: center;
 		padding: 20px 0;
 		border-radius: 30px;
-		background-color: #BA78FE;
+		//#ba78fe
+		background-color: #965ecf;
 		box-shadow: 0px -2px 15px 0 rgba(118, 74, 106, 0.2);
 
 		.top_bar {
